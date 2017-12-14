@@ -1,5 +1,5 @@
 import inspect
-from typing import Type, Dict, List
+from typing import Type, Dict, List, Any
 
 from attributes import LifeCycle, LIFECYCLE_ARGUMENT_NAME, IOC_ARGUMENTS_NAME
 from config import ConfigProvider, Plain, Config
@@ -96,6 +96,10 @@ _instance: IocContainer = None
 
 
 def initialize(config_provider: ConfigProvider, class_mapping: Dict[Type, Type] = None):
+    """
+
+    :rtype: object
+    """
     global _instance
     _instance = IocContainer(config_provider)
     if class_mapping is None:
@@ -105,7 +109,7 @@ def initialize(config_provider: ConfigProvider, class_mapping: Dict[Type, Type] 
         _instance.register_class(source_class, new_class)
 
 
-def get(cls: Type) -> IocContainer:
+def get(cls: Type) -> Any:
     return _instance.get(cls)
 
 
