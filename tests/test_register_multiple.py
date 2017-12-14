@@ -1,6 +1,6 @@
 from typing import List
 
-import iocynergy
+import cynergy
 from config import MemoryConfig
 
 
@@ -17,10 +17,10 @@ class Example2(object):
 
 
 def test_register_multiple():
-    iocynergy.initialize(MemoryConfig({}))
+    cynergy.initialize(MemoryConfig({}))
 
-    iocynergy.register_many(Example, [Example1, Example2])
-    instance = iocynergy.get(List[Example])
+    cynergy.register_many(Example, [Example1, Example2])
+    instance = cynergy.get(List[Example])
 
     assert type(instance) is list
     assert len(instance) == 2

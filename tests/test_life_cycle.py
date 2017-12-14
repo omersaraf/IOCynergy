@@ -1,6 +1,6 @@
 from typing import Type
 
-import iocynergy
+import cynergy
 from attributes import life_cycle, LifeCycle
 from config import MemoryConfig
 
@@ -41,9 +41,9 @@ def test_no_lifecycle():
 
 
 def assert_instance_of(cls: Type, expected_count):
-    iocynergy.initialize(MemoryConfig({}))
-    
-    iocynergy.get(cls)
-    iocynergy.get(cls)
+    cynergy.initialize(MemoryConfig({}))
+
+    cynergy.get(cls)
+    cynergy.get(cls)
 
     assert cls.count == expected_count

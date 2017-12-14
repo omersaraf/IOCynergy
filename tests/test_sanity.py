@@ -1,4 +1,4 @@
-import iocynergy
+import cynergy
 from config import MemoryConfig
 
 
@@ -34,9 +34,9 @@ def assert_type(instance, cls):
 
 
 def test_recursive_injection():
-    iocynergy.initialize(MemoryConfig({}))
+    cynergy.initialize(MemoryConfig({}))
 
-    instance = iocynergy.get(Hierarchy3)
+    instance = cynergy.get(Hierarchy3)
 
     assert_type(instance, Hierarchy3)
     assert_type(instance.arg1, Hierarchy10)

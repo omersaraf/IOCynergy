@@ -1,7 +1,7 @@
 import pytest
 
-import iocynergy
-from attributes import ioc_arguments
+import cynergy
+from attributes import arguments
 from config import Config, Plain, MemoryConfig
 
 FREE_ARGUMENT = "free argument"
@@ -11,8 +11,8 @@ CONFIG_WITH_DEFAULT = "config with default"
 CONFIG_DEFAULT = "default"
 
 
-@ioc_arguments(arg=FREE_ARGUMENT, arg2=Plain(PLAIN_ARGUMENT), arg3=Config(CONFIG_ARGUMENT),
-               arg4=Config(CONFIG_WITH_DEFAULT, CONFIG_DEFAULT))
+@arguments(arg=FREE_ARGUMENT, arg2=Plain(PLAIN_ARGUMENT), arg3=Config(CONFIG_ARGUMENT),
+           arg4=Config(CONFIG_WITH_DEFAULT, CONFIG_DEFAULT))
 class Example(object):
     def __init__(self, arg: str, arg2: str, arg3: str, arg4: str):
         self.arg4 = arg4
@@ -21,7 +21,7 @@ class Example(object):
         self.arg = arg
 
 
-@ioc_arguments(arg=Config("not exists key"))
+@arguments(arg=Config("not exists key"))
 class ExampleThrow(object):
     def __init__(self, arg: str):
         self.arg = arg
@@ -29,9 +29,9 @@ class ExampleThrow(object):
 
 def test_argument_injection():
     config_value = "config value"
-    iocynergy.initialize(MemoryConfig({CONFIG_ARGUMENT: config_value}))
+    cynergy.initialize(MemoryConfig({CONFIG_ARGUMENT: config_value}))
 
-    instance = iocynergy.get(Example)
+    instance = cynergy.get(Example)
 
     assert type(instance) is Example
     assert instance.arg == FREE_ARGUMENT
@@ -41,7 +41,7 @@ def test_argument_injection():
 
 
 def test_argument_not_in_config_and_no_default():
-    iocynergy.initialize(MemoryConfig({}))
+    cynergy.initialize(MemoryConfig({}))
 
     with pytest.raises(KeyError):
-        iocynergy.get(ExampleThrow)
+        cynergy.get(ExampleThrow)
