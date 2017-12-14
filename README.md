@@ -7,14 +7,15 @@ class TestClass:
     pass
     
 class ParentClass:
-    def __init__(self, test: TestClass):
-        self.test = test
+    def __init__(self, test_class: TestClass):
+        self.test_class = test_class
 
 cynergy.initialize(MemoryConfig({}))
 
 instance = cynergy.get(ParentClass)  # Returns TestClass initialized as singleton
 
-print(type(instance))  # TestClass
+print(type(instance))  # ParentClass
+print(type(instance.test_class))  # TestClass
 ```
 
 
@@ -27,7 +28,10 @@ class DbConnector:
         self.db = db
         self.host = host
 
-cynergy.initialize(MemoryConfig({"db_name": "LocalDbName", "hostname": "localhost"}))
+cynergy.initialize(MemoryConfig({
+    "db_name": "LocalDbName",
+    "hostname": "localhost"
+}))
 
 instance = cynergy.get(DbConnector)
 
