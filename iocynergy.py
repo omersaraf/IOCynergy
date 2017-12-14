@@ -1,12 +1,11 @@
 import inspect
 from typing import Type, Dict, List
 
+from attributes import LifeCycle, LIFECYCLE_ARGUMENT_NAME, IOC_ARGUMENTS_NAME
 from config import ConfigProvider, Plain, Config
 
 
 class IocContainer(object):
-    IOC_ARGUMENTS_NAME = '__ioc_arguments__'
-
     def __init__(self, config_provider: ConfigProvider):
         self.__multiple_class_mapping = {}
         self.__instances = {}
@@ -36,8 +35,8 @@ class IocContainer(object):
 
     def __create_instance_for_single(self, class_to_init: Type):
         arguments_mapping = {}
-        if hasattr(class_to_init, IocContainer.IOC_ARGUMENTS_NAME):
-            arguments_mapping = getattr(class_to_init, IocContainer.IOC_ARGUMENTS_NAME)
+        if hasattr(class_to_init, IOC_ARGUMENTS_NAME):
+            arguments_mapping = getattr(class_to_init, IOC_ARGUMENTS_NAME)
 
         arguments = inspect.signature(class_to_init)
         initiated_arguments = {}
@@ -78,11 +77,20 @@ class IocContainer(object):
         self.__class_mapping[cls.__name__] = new_classes
 
     def get(self, cls: Type):
-        if cls.__name__ not in self.__instances:
-            self.__instances[cls.__name__] = self.__create_instance(cls)
+        life_cycle = LifeCycle.SINGLETON
+        if hasattr(cls, LIFECYCLE_ARGUMENT_NAME):
+            life_cycle = getattr(cls, LIFECYCLE_ARGUMENT_NAME)
 
-        return self.__instances[cls.__name__]
+        if life_cycle == LifeCycle.SINGLETON:
+            if cls.__name__ not in self.__instances:
+                self.__instances[cls.__name__] = self.__create_instance(cls)
 
+            return self.__instances[cls.__name__]
+
+        elif life_cycle == LifeCycle.MULTI_INSTANCE:
+            return self.__create_instance(cls)
+
+        raise NotImplementedError("Not implemented lifecycle", life_cycle)
 
 _instance: IocContainer = None
 

@@ -1,9 +1,10 @@
-from container import IocContainer
+IOC_ARGUMENTS_NAME = '__ioc_arguments__'
+LIFECYCLE_ARGUMENT_NAME = '__lifecycle__'
 
 
 def ioc_arguments(**kwargs):
     def real_decorator(func):
-        setattr(func, IocContainer.IOC_ARGUMENTS_NAME, kwargs)
+        setattr(func, IOC_ARGUMENTS_NAME, kwargs)
         return func
 
     return real_decorator
@@ -15,4 +16,7 @@ class LifeCycle(object):
 
 
 def life_cycle(life_cycle_code: int):
-    pass
+    def real_decorator(func):
+        setattr(func, LIFECYCLE_ARGUMENT_NAME, life_cycle_code)
+        return func
+    return real_decorator
