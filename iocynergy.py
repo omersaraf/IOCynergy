@@ -20,7 +20,7 @@ class IocContainer(object):
             return argument.value
 
         if type(argument) is Config:
-            if argument.throw_if_not_exists:
+            if argument.default is None:
                 return self.__config.get(argument.value)
             else:
                 try:
@@ -91,6 +91,7 @@ class IocContainer(object):
             return self.__create_instance(cls)
 
         raise NotImplementedError("Not implemented lifecycle", life_cycle)
+
 
 _instance: IocContainer = None
 

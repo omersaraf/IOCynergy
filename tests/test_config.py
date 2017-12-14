@@ -21,7 +21,7 @@ class Example(object):
         self.arg = arg
 
 
-@ioc_arguments(arg=Config("not exists key", throw_if_not_exists=True))
+@ioc_arguments(arg=Config("not exists key"))
 class ExampleThrow(object):
     def __init__(self, arg: str):
         self.arg = arg
@@ -40,7 +40,7 @@ def test_argument_injection():
     assert instance.arg4 == CONFIG_DEFAULT
 
 
-def test_argument_not_in_config():
+def test_argument_not_in_config_and_no_default():
     iocynergy.initialize(MemoryConfig({}))
 
     with pytest.raises(KeyError):

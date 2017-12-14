@@ -7,9 +7,8 @@ class IocArgumentInitiator(object):
 
 
 class Config(IocArgumentInitiator):
-    def __init__(self, value, default=None, throw_if_not_exists=False):
+    def __init__(self, value, default=None):
         super().__init__(value)
-        self.throw_if_not_exists = throw_if_not_exists
         self.default = default
 
 

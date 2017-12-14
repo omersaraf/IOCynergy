@@ -1,15 +1,9 @@
-from typing import List
-
 import iocynergy
-from attributes import ioc_arguments
 from config import MemoryConfig
 
 
-@ioc_arguments(arg=iocynergy.Config("host"), arg2=iocynergy.Config("db"))
 class Hierarchy0(object):
-    def __init__(self, arg: str, arg2: str):
-        self.arg2 = arg2
-        self.arg = arg
+    pass
 
 
 class Hierarchy10(object):
