@@ -20,6 +20,9 @@ class IocContainer(object):
             return argument.value
 
         if type(argument) is Config:
+            if self.__config is None:
+                raise ValueError("Tried to access config while ConfigProvider is not initialized")
+
             if argument.default is None:
                 return self.__config.get(argument.value)
             else:
@@ -96,11 +99,7 @@ class IocContainer(object):
 _instance: IocContainer = None
 
 
-def initialize(config_provider: ConfigProvider, class_mapping: Dict[Type, Type] = None):
-    """
-
-    :rtype: object
-    """
+def initialize(config_provider: ConfigProvider = None, class_mapping: Dict[Type, Type] = None):
     global _instance
     _instance = IocContainer(config_provider)
     if class_mapping is None:
@@ -111,6 +110,9 @@ def initialize(config_provider: ConfigProvider, class_mapping: Dict[Type, Type] 
 
 
 def get(cls: Type) -> Any:
+    global _instance
+    if _instance is None:
+        _instance = IocContainer(None)
     return _instance.get(cls)
 
 

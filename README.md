@@ -10,8 +10,6 @@ class ParentClass:
     def __init__(self, test_class: TestClass):
         self.test_class = test_class
 
-cynergy.initialize(MemoryConfig({}))
-
 instance = cynergy.get(ParentClass)  # Returns TestClass initialized as singleton
 
 print(type(instance))  # ParentClass
@@ -50,7 +48,6 @@ class Original:
 class Other:
     pass
 
-cynergy.initialize(MemoryConfig({}))
 cynergy.register_class(Original, Other)
 
 instance = cynergy.get(Original)
@@ -72,8 +69,6 @@ class SomeHandler2(HandlerBase):
 class SomeService:
     def __init__(self, handlers: List[HandlerBase]):
         self.handlers = handlers
-
-cynergy.initialize(MemoryConfig({}))
 
 cynergy.register_many(HandlerBase, [SomeHandler1, SomeHandler2])
 

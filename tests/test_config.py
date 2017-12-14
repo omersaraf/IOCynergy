@@ -45,3 +45,10 @@ def test_argument_not_in_config_and_no_default():
 
     with pytest.raises(KeyError):
         cynergy.get(ExampleThrow)
+
+
+def test_config_provider_is_not_initialized():
+    cynergy.initialize()
+
+    with pytest.raises(ValueError):
+        cynergy.get(Example)

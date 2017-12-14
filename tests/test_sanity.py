@@ -34,8 +34,6 @@ def assert_type(instance, cls):
 
 
 def test_recursive_injection():
-    cynergy.initialize(MemoryConfig({}))
-
     instance = cynergy.get(Hierarchy3)
 
     assert_type(instance, Hierarchy3)

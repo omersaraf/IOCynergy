@@ -1,7 +1,6 @@
 from typing import List
 
 import cynergy
-from config import MemoryConfig
 
 
 class Example(object):
@@ -17,8 +16,6 @@ class Example2(object):
 
 
 def test_register_multiple():
-    cynergy.initialize(MemoryConfig({}))
-
     cynergy.register_many(Example, [Example1, Example2])
     instance = cynergy.get(List[Example])
 
