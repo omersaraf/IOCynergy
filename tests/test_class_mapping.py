@@ -1,5 +1,9 @@
+import warnings
+
 import cynergy
-from config import MemoryConfig
+
+
+warnings.simplefilter("ignore", UserWarning)
 
 
 class Example(object):
@@ -10,8 +14,12 @@ class Example2(object):
     pass
 
 
+def setup():
+    cynergy.initialize()
+
+
 def test_class_mapping():
-    cynergy.initialize(MemoryConfig({}))
+    cynergy.initialize()
     cynergy.register_class(Example, Example2)
 
     instance = cynergy.get(Example)
@@ -20,7 +28,7 @@ def test_class_mapping():
 
 
 def test_class_mapping_from_init():
-    cynergy.initialize(MemoryConfig({}), {Example: Example2})
+    cynergy.initialize(class_mapping={Example: Example2})
 
     instance = cynergy.get(Example)
 

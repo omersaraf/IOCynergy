@@ -1,5 +1,4 @@
 import cynergy
-from config import MemoryConfig
 
 
 class Hierarchy0(object):

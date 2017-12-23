@@ -1,3 +1,5 @@
+import warnings
+
 import pytest
 
 import cynergy
@@ -9,6 +11,8 @@ PLAIN_ARGUMENT = "plain argument"
 CONFIG_ARGUMENT = "config argument"
 CONFIG_WITH_DEFAULT = "config with default"
 CONFIG_DEFAULT = "default"
+
+warnings.simplefilter("ignore")
 
 
 @arguments(arg=FREE_ARGUMENT, arg2=Plain(PLAIN_ARGUMENT), arg3=Config(CONFIG_ARGUMENT),

@@ -2,7 +2,6 @@ from typing import Type
 
 import cynergy
 from attributes import life_cycle, LifeCycle
-from config import MemoryConfig
 
 
 @life_cycle(LifeCycle.MULTI_INSTANCE)
