@@ -40,3 +40,12 @@ atlassian-ide-plugin.xml
 
 .idea
 tests/.cache
+bin/*
+lib/*
+dist/*
+include/*
+cynergy.egg-info/*
+pip-selfcheck.json
+man/*
+build/*
+\.*

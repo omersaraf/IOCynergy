@@ -2,8 +2,9 @@ import inspect
 import typing
 from warnings import warn
 
-import attributes
-from config import ConfigProvider, Plain, Config
+from cynergy.config import ConfigProvider, Plain, Config
+
+from cynergy import attributes
 
 T = typing.TypeVar('T')
 
@@ -109,6 +110,9 @@ class __IocContainer(object):
 
         raise NotImplementedError("Not implemented lifecycle", life_cycle)
 
+    def clear_all(self):
+        self.__instances = {}
+
 
 __instance: __IocContainer = None
 
@@ -125,6 +129,7 @@ def initialize(config_provider: typing.Optional[ConfigProvider] = None,
     global __instance
     if __instance is not None:
         warn("Container already initialized. It is better to initialize container before using it", UserWarning)
+        __instance.clear_all()
     __instance = __IocContainer(config_provider)
     if class_mapping is None:
         return
@@ -132,6 +137,8 @@ def initialize(config_provider: typing.Optional[ConfigProvider] = None,
     for source_class, new_class in class_mapping.items():
         __instance.register_class(source_class, new_class)
 
+def _clear_all():
+    return __get_instance().clear_all()
 
 def get(cls: typing.Type[T]) -> T:
     return __get_instance().get(cls)

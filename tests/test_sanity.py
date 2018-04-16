@@ -1,4 +1,4 @@
-import cynergy
+from cynergy import container
 
 
 class Hierarchy0(object):
@@ -33,7 +33,7 @@ def assert_type(instance, cls):
 
 
 def test_recursive_injection():
-    instance = cynergy.get(Hierarchy3)
+    instance = container.get(Hierarchy3)
 
     assert_type(instance, Hierarchy3)
     assert_type(instance.arg1, Hierarchy10)

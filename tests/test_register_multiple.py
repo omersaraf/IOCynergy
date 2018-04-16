@@ -1,6 +1,6 @@
 from typing import List
 
-import cynergy
+from cynergy import container
 
 
 class Example(object):
@@ -30,8 +30,8 @@ class Main(object):
 
 
 def test_register_multiple():
-    cynergy.register_many(Example, [Example1, Example2])
-    instance = cynergy.get(List[Example])
+    container.register_many(Example, [Example1, Example2])
+    instance = container.get(List[Example])
 
     assert type(instance) is list
     assert len(instance) == 2
@@ -40,9 +40,10 @@ def test_register_multiple():
 
 
 def test_multiple_list_arguments():
-    cynergy.register_many(Example, [Example2, Example3])
-    cynergy.register_many(Example1, [Example3, Example4])
-    instance = cynergy.get(Main)
+    container._clear_all()
+    container.register_many(Example, [Example2, Example3])
+    container.register_many(Example1, [Example3, Example4])
+    instance = container.get(Main)
 
     assert type(instance) is Main
     assert len(instance.examples) == 2

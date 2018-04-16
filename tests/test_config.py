@@ -1,10 +1,10 @@
 import warnings
 
 import pytest
+from cynergy.config import Config, Plain, MemoryConfig
 
-import cynergy
-from attributes import arguments
-from config import Config, Plain, MemoryConfig
+from cynergy import container
+from cynergy.attributes import arguments
 
 FREE_ARGUMENT = "free argument"
 PLAIN_ARGUMENT = "plain argument"
@@ -33,9 +33,9 @@ class ExampleThrow(object):
 
 def test_argument_injection():
     config_value = "config value"
-    cynergy.initialize(MemoryConfig({CONFIG_ARGUMENT: config_value}))
+    container.initialize(MemoryConfig({CONFIG_ARGUMENT: config_value}))
 
-    instance = cynergy.get(Example)
+    instance = container.get(Example)
 
     assert type(instance) is Example
     assert instance.arg == FREE_ARGUMENT
@@ -45,14 +45,14 @@ def test_argument_injection():
 
 
 def test_argument_not_in_config_and_no_default():
-    cynergy.initialize(MemoryConfig({}))
+    container.initialize(MemoryConfig({}))
 
     with pytest.raises(KeyError):
-        cynergy.get(ExampleThrow)
+        container.get(ExampleThrow)
 
 
 def test_config_provider_is_not_initialized():
-    cynergy.initialize()
+    container.initialize()
 
     with pytest.raises(ValueError):
-        cynergy.get(Example)
+        container.get(Example)

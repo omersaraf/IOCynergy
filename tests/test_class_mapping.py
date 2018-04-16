@@ -1,6 +1,6 @@
 import warnings
 
-import cynergy
+from cynergy import container
 
 
 warnings.simplefilter("ignore", UserWarning)
@@ -15,21 +15,21 @@ class Example2(object):
 
 
 def setup():
-    cynergy.initialize()
+    container.initialize()
 
 
 def test_class_mapping():
-    cynergy.initialize()
-    cynergy.register_class(Example, Example2)
+    container.initialize()
+    container.register_class(Example, Example2)
 
-    instance = cynergy.get(Example)
+    instance = container.get(Example)
 
     assert type(instance) is Example2
 
 
 def test_class_mapping_from_init():
-    cynergy.initialize(class_mapping={Example: Example2})
+    container.initialize(class_mapping={Example: Example2})
 
-    instance = cynergy.get(Example)
+    instance = container.get(Example)
 
     assert type(instance) is Example2

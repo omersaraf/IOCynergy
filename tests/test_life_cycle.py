@@ -1,7 +1,7 @@
 from typing import Type
 
-import cynergy
-from attributes import life_cycle, LifeCycle
+from cynergy import container
+from cynergy.attributes import life_cycle, LifeCycle
 
 
 @life_cycle(LifeCycle.MULTI_INSTANCE)
@@ -40,7 +40,7 @@ def test_no_lifecycle():
 
 
 def assert_instance_of(cls: Type, expected_count):
-    cynergy.get(cls)
-    cynergy.get(cls)
+    container.get(cls)
+    container.get(cls)
 
     assert cls.count == expected_count
