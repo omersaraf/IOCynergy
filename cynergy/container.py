@@ -114,7 +114,7 @@ class __IocContainer(object):
         self.__instances = {}
 
 
-__instance: __IocContainer = None
+__instance = None
 
 
 def __get_instance() -> __IocContainer:
