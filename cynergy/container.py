@@ -2,20 +2,21 @@ import inspect
 import typing
 from warnings import warn
 
-from cynergy.config import ConfigProvider, Plain, Config
+from cynergy.config import ConfigProvider, Plain, Config, ServiceByName
 
 from cynergy import attributes
 
 T = typing.TypeVar('T')
 
 
-class __IocContainer(object):
+class IocContainer(object):
     def __init__(self, config_provider: typing.Optional[ConfigProvider]):
         self.__multiple_class_mapping = {}
         self.__instances = {}
         self.__class_mapping = {}
         self.__config = config_provider
         self.__plain_whitelist = [str, int, dict, list, set, float]
+        self.__BY_NAME_FORMAT = "by_name|{}"
 
     def __resolve_argument(self, argument):
         if type(argument) in self.__plain_whitelist:
@@ -35,6 +36,9 @@ class __IocContainer(object):
                     return self.__config.get(argument.value)
                 except KeyError:
                     return argument.default
+
+        if type(argument) is ServiceByName:
+            return self.get_by_name(argument.value)
 
         raise NotImplementedError(
             "Argument type '{}' is not supported (did you pass argument type?)".format(type(argument)))
@@ -82,7 +86,7 @@ class __IocContainer(object):
         return self.__get_instance(cls)
 
     def register_instance(self, cls, instance):
-        self.__instances[cls.__name__] = instance
+        self.__register_instance_by_name(cls.__name__, instance)
 
     def register_class(self, cls, assign_to: typing.Type):
         self.__class_mapping[cls.__name__] = assign_to
@@ -95,6 +99,18 @@ class __IocContainer(object):
         if type(cls) == type(typing.List):
             return cls.__args__[0].__name__
         return cls.__name__
+
+    def __register_instance_by_name(self, name, instance):
+        self.__instances[name] = instance
+
+    def register_instance_by_name(self, name, instance):
+        self.__register_instance_by_name(self.__BY_NAME_FORMAT.format(name), instance)
+
+    def get_by_name(self, name):
+        key = self.__BY_NAME_FORMAT.format(name)
+        if key not in self.__instances:
+            KeyError('The service "{}" is not registered'.format(key))
+        return self.__instances[key]
 
     def get(self, cls: typing.Type[T]) -> T:
         life_cycle = attributes.LifeCycle.SINGLETON
@@ -117,10 +133,10 @@ class __IocContainer(object):
 __instance = None
 
 
-def __get_instance() -> __IocContainer:
+def __get_instance() -> IocContainer:
     global __instance
     if __instance is None:
-        __instance = __IocContainer(None)
+        __instance = IocContainer(None)
     return __instance
 
 
@@ -130,15 +146,21 @@ def initialize(config_provider: typing.Optional[ConfigProvider] = None,
     if __instance is not None:
         warn("Container already initialized. It is better to initialize container before using it", UserWarning)
         __instance.clear_all()
-    __instance = __IocContainer(config_provider)
+    __instance = IocContainer(config_provider)
     if class_mapping is None:
         return
 
     for source_class, new_class in class_mapping.items():
         __instance.register_class(source_class, new_class)
 
+
 def _clear_all():
     return __get_instance().clear_all()
+
+
+def register_instance_by_name(name, instance):
+    return __get_instance().register_instance_by_name(name, instance)
+
 
 def get(cls: typing.Type[T]) -> T:
     return __get_instance().get(cls)
@@ -149,6 +171,11 @@ def register_instance(cls, instance):
 
 
 def register_class(cls, assign_to):
+    """
+    Register type (cls) to type assign_to - meaning everytime you'll ask the type cls you'll receive assign_to
+    :param cls: Class to map from
+    :param assign_to: Class to map to
+    """
     return __get_instance().register_class(cls, assign_to)
 
 

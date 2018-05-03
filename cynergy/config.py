@@ -16,6 +16,11 @@ class Plain(IocArgumentInitiator):
     pass
 
 
+class ServiceByName(IocArgumentInitiator):
+    def __init__(self, value):
+        super().__init__(value)
+
+
 class ConfigProvider(object):
     def get(self, key: str) -> Any:
         raise NotImplementedError("Not implemented")
