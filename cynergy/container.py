@@ -178,6 +178,8 @@ def register_class(cls, assign_to):
     """
     return __get_instance().register_class(cls, assign_to)
 
+def get_by_name(name):
+    return __get_instance().get_by_name(name)
 
 def register_many(cls: typing.Type, types: typing.List[typing.Type]):
     return __get_instance().register_many(cls, types)
