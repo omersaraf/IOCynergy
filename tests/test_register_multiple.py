@@ -29,6 +29,11 @@ class Main(object):
         self.examples = examples
 
 
+class Main2(object):
+    def __init__(self, examples: List[Example]):
+        self.examples = examples
+
+
 def test_register_multiple():
     container.register_many(Example, [Example1, Example2])
     instance = container.get(List[Example])
@@ -52,3 +57,17 @@ def test_multiple_list_arguments():
     assert type(instance.examples[1]) is Example3
     assert type(instance.examples1[0]) is Example3
     assert type(instance.examples1[1]) is Example4
+
+
+def test_register_multiple_when_onc_instance_is_already_registered():
+    container._clear_all()
+    ex1 = Example2()
+    container.register(Example1, ex1)
+    container.register_many(Example, [Example1, Example3])
+
+    instance = container.get(Main2)
+
+    assert type(instance) is Main2
+    assert len(instance.examples) == 2
+    assert instance.examples[0] == ex1
+    assert type(instance.examples[1]) is Example3

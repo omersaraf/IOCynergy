@@ -5,6 +5,7 @@ from cynergy.config import Config, Plain, MemoryConfig, ServiceByName
 
 from cynergy import container
 from cynergy.attributes import arguments
+from errors.ContainerException import ConfigProviderRequiredException
 
 FREE_ARGUMENT = "free argument"
 PLAIN_ARGUMENT = "plain argument"
@@ -65,5 +66,5 @@ def test_argument_not_in_config_and_no_default():
 def test_config_provider_is_not_initialized():
     container.initialize()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ConfigProviderRequiredException):
         container.get(Example)

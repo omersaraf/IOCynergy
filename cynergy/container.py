@@ -5,6 +5,7 @@ from warnings import warn
 from cynergy.config import ConfigProvider, Plain, Config, ServiceByName
 
 from cynergy import attributes
+from errors.ContainerException import ConfigProviderRequiredException
 
 T = typing.TypeVar('T')
 
@@ -15,11 +16,11 @@ class IocContainer(object):
         self.__instances = {}
         self.__class_mapping = {}
         self.__config = config_provider
-        self.__plain_whitelist = [str, int, dict, list, set, float]
+        self.__primitives = (str, int, dict, list, set, float)
         self.__BY_NAME_FORMAT = "by_name|{}"
 
     def __resolve_argument(self, argument):
-        if type(argument) in self.__plain_whitelist:
+        if type(argument) in self.__primitives:
             return argument
 
         if type(argument) is Plain:
@@ -41,19 +42,30 @@ class IocContainer(object):
             return self.get_by_name(argument.value)
 
         raise NotImplementedError(
-            "Argument type '{}' is not supported (did you pass argument type?)".format(type(argument)))
+            'Argument type "{}" is not supported (did you pass argument type?)'.format(type(argument)))
 
     def __create_instance_for_single(self, class_to_init: typing.Type, original: typing.Type):
         arguments_mapping = {}
         if hasattr(class_to_init, attributes.IOC_ARGUMENTS_NAME):
             arguments_mapping = getattr(class_to_init, attributes.IOC_ARGUMENTS_NAME)
 
-        arguments = inspect.signature(class_to_init)
+        try:
+            arguments = inspect.signature(class_to_init)
+        except Exception:
+            raise Exception("Error while trying to access class signature [{}]. Maybe you tried to register a module "
+                            "instead of a class?".format(class_to_init.__name__))
         initiated_arguments = {}
         for argument in arguments.parameters.values():
             if argument.name in arguments_mapping:
-                initiated_argument = self.__resolve_argument(arguments_mapping[argument.name])
+                try:
+                    initiated_argument = self.__resolve_argument(arguments_mapping[argument.name])
+                except ValueError:
+                    raise ConfigProviderRequiredException(class_to_init, argument)
             else:
+                if argument.annotation in self.__primitives:
+                    raise TypeError("Could not initialize primitive argument [{}] for class [{}] without argument "
+                                    "mapping "
+                                    .format(argument.name, class_to_init.__name__))
                 initiated_argument = self.get(argument.annotation)
 
             initiated_arguments[argument.name] = initiated_argument
@@ -74,7 +86,7 @@ class IocContainer(object):
         else:
             result = []
             for class_to_init in classes_to_init:
-                result.append(self.__create_instance(class_to_init))
+                result.append(self.get(class_to_init))
             self.__set_instance(original, result)
 
     def __create_instance(self, cls: typing.Type):
@@ -129,6 +141,12 @@ class IocContainer(object):
     def clear_all(self):
         self.__instances = {}
 
+    def register(self, cls: typing.Type, class_or_instance):
+        if inspect.isclass(class_or_instance):
+            self.register_class(cls, class_or_instance)
+        else:
+            self.register_instance(cls, class_or_instance)
+
 
 __instance = None
 
@@ -144,7 +162,8 @@ def initialize(config_provider: typing.Optional[ConfigProvider] = None,
                class_mapping: typing.Dict[typing.Type, typing.Type] = None):
     global __instance
     if __instance is not None:
-        warn("Container already initialized. It is better to initialize container before using it", UserWarning)
+        warn("Container already initialized. If you need multiple instances consider not use the container statically",
+             UserWarning)
         __instance.clear_all()
     __instance = IocContainer(config_provider)
     if class_mapping is None:
@@ -167,6 +186,7 @@ def get(cls: typing.Type[T]) -> T:
 
 
 def register_instance(cls, instance):
+    warn("This function is deprecated, can be now used as register(cls, obj)")
     return __get_instance().register_instance(cls, instance)
 
 
@@ -176,10 +196,17 @@ def register_class(cls, assign_to):
     :param cls: Class to map from
     :param assign_to: Class to map to
     """
+    warn("This function is deprecated, can be now used as register(cls, obj)")
     return __get_instance().register_class(cls, assign_to)
+
+
+def register(cls, class_or_instance):
+    return __get_instance().register(cls, class_or_instance)
+
 
 def get_by_name(name):
     return __get_instance().get_by_name(name)
+
 
 def register_many(cls: typing.Type, types: typing.List[typing.Type]):
     return __get_instance().register_many(cls, types)
