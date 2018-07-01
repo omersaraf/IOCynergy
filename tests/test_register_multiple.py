@@ -48,6 +48,7 @@ def test_multiple_list_arguments():
     container._clear_all()
     container.register_many(Example, [Example2, Example3])
     container.register_many(Example1, [Example3, Example4])
+
     instance = container.get(Main)
 
     assert type(instance) is Main
@@ -57,6 +58,27 @@ def test_multiple_list_arguments():
     assert type(instance.examples[1]) is Example3
     assert type(instance.examples1[0]) is Example3
     assert type(instance.examples1[1]) is Example4
+
+
+class MainWrapper(object):
+    def __init__(self, main: Main):
+        self.main = main
+
+
+def test_multiple_list_arguments_with_wrap():
+    container._clear_all()
+    container.register_many(Example, [Example2, Example3])
+    container.register_many(Example1, [Example3, Example4])
+
+    instance = container.get(MainWrapper)
+
+    assert type(instance) is MainWrapper
+    assert len(instance.main.examples) == 2
+    assert len(instance.main.examples1) == 2
+    assert type(instance.main.examples[0]) is Example2
+    assert type(instance.main.examples[1]) is Example3
+    assert type(instance.main.examples1[0]) is Example3
+    assert type(instance.main.examples1[1]) is Example4
 
 
 def test_register_multiple_when_onc_instance_is_already_registered():

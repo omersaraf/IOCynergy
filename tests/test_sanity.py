@@ -1,4 +1,13 @@
+from typing import Dict
+
 from cynergy import container
+
+
+class HasDefaultArguments(object):
+    def __init__(self, i=1, s="s", d: Dict = None):
+        self.d = d
+        self.s = s
+        self.i = i
 
 
 class Hierarchy0(object):
@@ -43,3 +52,12 @@ def test_recursive_injection():
     assert_type(instance.arg2.arg2, Hierarchy11)
     assert_type(instance.arg2.arg2.arg, Hierarchy0)
     assert_type(instance.arg2.arg2.arg, Hierarchy0)
+
+
+def test_class_with_default_arguments():
+    container._clear_all()
+    instance = container.get(HasDefaultArguments)
+
+    assert instance.i == 1
+    assert instance.s == "s"
+    assert instance.d is None

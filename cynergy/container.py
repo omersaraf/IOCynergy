@@ -62,11 +62,16 @@ class IocContainer(object):
                 except ValueError:
                     raise ConfigProviderRequiredException(class_to_init, argument)
             else:
-                if argument.annotation in self.__primitives:
-                    raise TypeError("Could not initialize primitive argument [{}] for class [{}] without argument "
-                                    "mapping "
-                                    .format(argument.name, class_to_init.__name__))
-                initiated_argument = self.get(argument.annotation)
+                if not argument.default == inspect._empty:
+                    initiated_argument = argument.default
+                else:
+                    if not argument.default == inspect._empty:
+                        initiated_argument = argument.default
+                    else:
+                        if argument.annotation in self.__primitives:
+                            raise TypeError("Could not initialize primitive argument [{}] for class [{}] without "
+                                            "argument mapping ".format(argument.name, class_to_init.__name__))
+                        initiated_argument = self.get(argument.annotation)
 
             initiated_arguments[argument.name] = initiated_argument
         self.__set_instance(original, class_to_init(**initiated_arguments))
