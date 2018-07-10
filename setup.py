@@ -39,7 +39,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.8',  # Required
+    version='1.1.10',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -122,7 +122,7 @@ setup(
     # the `py_modules` argument instead as follows, which will expect a file
     # called `my_module.py` to exist:
     #
-    py_modules=["cynergy", "cynergy.attributes", "cynergy.config", "cynergy.container"],
+    py_modules=["cynergy", "cynergy.attributes", "cynergy.config", "cynergy.container", "cynergy.errors"],
     #
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),  # Required
 
