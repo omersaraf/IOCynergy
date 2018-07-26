@@ -2,10 +2,12 @@ import inspect
 import typing
 from warnings import warn
 
+from cynergy.attributes import LifeCycle
+
 from cynergy.config import ConfigProvider, Plain, Config, ServiceByName
 
 from cynergy import attributes
-from errors.ContainerException import ConfigProviderRequiredException
+from cynergy.errors.ContainerException import ConfigProviderRequiredException
 
 T = typing.TypeVar('T')
 
@@ -129,10 +131,11 @@ class IocContainer(object):
             KeyError('The service "{}" is not registered'.format(key))
         return self.__instances[key]
 
-    def get(self, cls: typing.Type[T]) -> T:
-        life_cycle = attributes.LifeCycle.SINGLETON
-        if hasattr(cls, attributes.LIFECYCLE_ARGUMENT_NAME):
-            life_cycle = getattr(cls, attributes.LIFECYCLE_ARGUMENT_NAME)
+    def get(self, cls: typing.Type[T], life_cycle=LifeCycle.SINGLETON) -> T:
+        if not life_cycle:
+            life_cycle = attributes.LifeCycle.SINGLETON
+            if hasattr(cls, attributes.LIFECYCLE_ARGUMENT_NAME):
+                life_cycle = getattr(cls, attributes.LIFECYCLE_ARGUMENT_NAME)
 
         if life_cycle == attributes.LifeCycle.SINGLETON:
             if self.__get_class_name(cls) not in self.__instances:
@@ -186,8 +189,8 @@ def register_instance_by_name(name, instance):
     return __get_instance().register_instance_by_name(name, instance)
 
 
-def get(cls: typing.Type[T]) -> T:
-    return __get_instance().get(cls)
+def get(cls: typing.Type[T], life_cycle=LifeCycle.SINGLETON) -> T:
+    return __get_instance().get(cls, life_cycle)
 
 
 def register_instance(cls, instance):
