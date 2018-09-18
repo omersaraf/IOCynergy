@@ -17,6 +17,7 @@ class IocContainer(object):
         self.__multiple_class_mapping = {}
         self.__instances = {}
         self.__class_mapping = {}
+        self.__config_cache = {}
         self.__config = config_provider
         self.__primitives = (str, int, dict, list, set, float)
         self.__BY_NAME_FORMAT = "by_name|{}"
@@ -150,10 +151,17 @@ class IocContainer(object):
         self.__instances = {}
 
     def register(self, cls: typing.Type, class_or_instance):
-        if inspect.isclass(class_or_instance):
+        if isinstance(class_or_instance, list):
+            self.register_many(cls, class_or_instance)
+        elif inspect.isclass(class_or_instance):
             self.register_class(cls, class_or_instance)
         else:
             self.register_instance(cls, class_or_instance)
+
+    def get_config(self, key: str):
+        if key not in self.__config_cache:
+            self.__config_cache[key] = self.__config.get(key)
+        return self.__config_cache[key]
 
 
 __instance = None
@@ -164,6 +172,10 @@ def __get_instance() -> IocContainer:
     if __instance is None:
         __instance = IocContainer(None)
     return __instance
+
+
+def get_config(key: str):
+    return __get_instance().get_config(key)
 
 
 def initialize(config_provider: typing.Optional[ConfigProvider] = None,
