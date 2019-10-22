@@ -1,5 +1,5 @@
 # IOCynergy
-Python module for IOC container using dependency injection (uses python 3+ type hints)
+Python module for IOC container using dependency injection (uses python 3+ type hints, supported until Python3.7)
 
 ## Easy way to initialize your services
 ```python
