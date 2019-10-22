@@ -25,16 +25,18 @@ class ConfigProvider(object):
     def get(self, key: str) -> Any:
         raise NotImplementedError("Not implemented")
 
-    def set(self, key: str, value: Any):
-        raise NotImplementedError("Not implemented")
-
 
 class MemoryConfig(ConfigProvider):
     def __init__(self, config: Dict[str, Any]):
         self.__config = config
 
-    def set(self, key: str, value: Any):
-        self.__config[key] = value
-
     def get(self, key: str) -> Any:
         return self.__config[key]
+
+
+class ModuleConfig(ConfigProvider):
+    def __init__(self, module):
+        self.module = module
+
+    def get(self, key: str) -> Any:
+        return getattr(self.module, key)
