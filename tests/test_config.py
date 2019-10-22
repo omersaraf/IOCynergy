@@ -5,7 +5,7 @@ from cynergy.config import Config, Plain, MemoryConfig, ServiceByName
 
 from cynergy import container
 from cynergy.attributes import arguments
-from cynergy.errors import ConfigProviderRequiredException
+from cynergy.errors.ContainerException import ConfigProviderRequiredException
 
 FREE_ARGUMENT = "free argument"
 PLAIN_ARGUMENT = "plain argument"
