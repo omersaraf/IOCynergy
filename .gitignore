@@ -50,3 +50,4 @@ man/*
 build/*
 \.*
 venv/*
+__pycache__*

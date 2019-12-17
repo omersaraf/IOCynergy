@@ -208,7 +208,6 @@ def register_class(cls, assign_to):
     :param cls: Class to map from
     :param assign_to: Class to map to
     """
-    warn("This function is deprecated, can be now used as register(cls, obj)")
     return __get_instance().register_class(cls, assign_to)
 
 
