@@ -29,6 +29,7 @@ class NoLifeCycleExample(object):
 
 def test_multi():
     assert_instance_of(MultiExample, 2)
+    MultiExample.count = 0
 
 
 def test_single():
