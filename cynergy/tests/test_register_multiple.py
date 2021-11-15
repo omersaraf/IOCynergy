@@ -35,6 +35,7 @@ class Main2(object):
 
 
 def test_register_multiple():
+    container.initialize()
     container.register_many(Example, [Example1, Example2])
     instance = container.get(List[Example])
 
